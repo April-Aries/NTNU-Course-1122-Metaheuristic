@@ -47,76 +47,81 @@ def SpantimeCalculate( sol: list[int], data: list[list[int]], jobs: int, machine
 
 ## Parameters needed
 ### Parameters for whole algorithm
-cases = 20          # <--- Modify if needed
+cases = 50          # <--- Modify if needed
 best = 10000
 worst = 0
-total = 0
 avg = 0
+standardDeviation = 0
+filenames = [
+    'tai100_10_1.txt',  'tai100_5_1.txt',   'tai20_20_1.txt',
+    'tai50_10_1.txt',   'tai50_5_1.txt',    'tai100_20_1.txt',
+    'tai20_10_1.txt',   'tai20_5_1.txt',    'tai50_20_1.txt'
+]
 
-### Parameters for SA
+f2 = open( './statistics/SA.txt', "w")
 
-epochLength = 10    # <--- Modify if needed
-temperature = 1000   # <--- Modify if needed
-coolingFactor = 10  # <--- Modify if needed
-MaxSteps = 500      # <--- Modify if needed
+for each in filenames:
+    ### Parameters for whole algorithm
+    total = 0
 
-## Read Data
-Data = ReadData( './PFSP_benchmark_data_set/tai50_10_1.txt' )
-machines = Data[0]
-jobs = Data[1]
-data = Data[2]
+    ### Parameters for SA
+    epochLength = 10    # <--- Modify if needed
+    temperature = 1000  # <--- Modify if needed
+    coolingFactor = 10  # <--- Modify if needed
+    MaxSteps = 1000     # <--- Modify if needed
 
-"""
-print(f'There are {machines} machines and {jobs} jobs.\n')
-for i in range( machines ):
-    for j in range( jobs ):
-        print( data[i][j], end = ' ' )
-    print('\n', end = '' )
-"""
+    ## Read Data
+    Data = ReadData( './PFSP_benchmark_data_set/' + each )
+    machines = Data[0]
+    jobs = Data[1]
+    data = Data[2]
 
-## Encoding Scheme
+    ## Initial Solution: generating via randomness
 
-## Initial Solution
+    for _ in range( cases ):
 
-for _ in range( cases ):
+        sol = [ i for i in range( jobs ) ]
+        random.shuffle( sol )
+        TestSol = [ i for i in sol ]
+        curr = SpantimeCalculate( sol, data, jobs, machines )
+        temperature = 1000   # <--- Modify if needed
+        steps = 0
 
-    sol = [ i for i in range( jobs ) ]
-    TestSol = [ i for i in range( jobs ) ]
-    curr = SpantimeCalculate( sol, data, jobs, machines )
-    temperature = 1000   # <--- Modify if needed
-    steps = 0
+        for __ in range( MaxSteps ):   # Stopping criteria
 
-    for __ in range( MaxSteps ):   # Stopping criteria
+            ## Neighborhood Function
+            i = random.randrange( 0, jobs, 1 )
+            j = random.randrange( 0, jobs, 1 )
+            swap( TestSol, i, j )
 
-        ## Neighborhood Function
-        i = random.randrange( 0, jobs, 1 )
-        j = random.randrange( 0, jobs, 1 )
-        swap( TestSol, i, j )
+            ## Calculate Machine Time
+            time = SpantimeCalculate( TestSol, data, jobs, machines )
 
-        ## Calculate Machine Time
-        time = SpantimeCalculate( TestSol, data, jobs, machines )
-
-        ## Selecting Function
-        if time < curr:
-            curr = time
-            sol = TestSol
-        else:
-            if math.exp( ( time - curr ) / temperature ) < random.uniform( 0.0, 1.0 ):
+            ## Selecting Function
+            if time < curr:
                 curr = time
                 sol = TestSol
+            else:
+                if math.exp( ( time - curr ) / temperature ) < random.uniform( 0.0, 1.0 ):
+                    curr = time
+                    sol = TestSol
 
-        ## Temperature Control
-        steps += 1
-        if steps % epochLength == 0:
-            temperature = cool( temperature, coolingFactor )
-    
-    #print( f'In {_} round: {curr}' )
-    if curr < best:
-        best = curr
-    if curr > worst:
-        worst = curr
-    total += curr
+            ## Temperature Control
+            steps += 1
+            if steps % epochLength == 0:
+                temperature = cool( temperature, coolingFactor )
+        
+        #print( f'\t\tIn {_} round: {curr}' )
+        if curr < best:
+            best = curr
+        if curr > worst:
+            worst = curr
+        total += curr
+        standardDeviation += ( curr * curr )
 
-avg = total / cases
+    avg = round( total / cases, 2 )
+    standardDeviation = round( math.sqrt( ( standardDeviation / cases ) - ( avg * avg ) ), 2 )
 
-print( f'Best: {best}\nWorst: {worst}\nAverage: {avg}' )
+    print( f'In {each}:\n\tBest: {best}\n\tWorst: {worst}\n\tAverage: {avg}\n\tStandard deviation: {standardDeviation}' )
+    f2.write( f'{each}\t{best}\t{avg}\t{worst}\t{standardDeviation}\n' )
+f2.close()
