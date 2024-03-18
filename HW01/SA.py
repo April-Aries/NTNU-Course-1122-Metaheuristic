@@ -70,6 +70,8 @@ for each in filenames:
     coolingFactor = 10  # <--- Modify if needed
     MaxSteps = 1000     # <--- Modify if needed
 
+    f2.write( f'Initial temperature: {temperature}, cooling factor: {coolingFactor}, Epoch length: {epochLength}\n' )
+
     ## Read Data
     Data = ReadData( './PFSP_benchmark_data_set/' + each )
     machines = Data[0]
@@ -123,5 +125,5 @@ for each in filenames:
     standardDeviation = round( math.sqrt( ( standardDeviation / cases ) - ( avg * avg ) ), 2 )
 
     print( f'In {each}:\n\tBest: {best}\n\tWorst: {worst}\n\tAverage: {avg}\n\tStandard deviation: {standardDeviation}' )
-    f2.write( f'{each}\t{best}\t{avg}\t{worst}\t{standardDeviation}\n' )
+    f2.write( f'\t{each}\t{best}\t{avg}\t{worst}\t{standardDeviation}\n' )
 f2.close()
