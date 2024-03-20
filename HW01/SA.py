@@ -1,5 +1,6 @@
 import random
 import math
+import matplotlib.pyplot as plt
 
 # ReadData method
 def ReadData( filepath: str ) -> tuple[ int, int, list[ list[ int ] ] ]:
@@ -48,27 +49,34 @@ def SpantimeCalculate( sol: list[int], data: list[list[int]], jobs: int, machine
 ## Parameters needed
 ### Parameters for whole algorithm
 cases = 50          # <--- Modify if needed
-best = 10000
-worst = 0
-avg = 0
-standardDeviation = 0
+"""
 filenames = [
     'tai100_10_1.txt',  'tai100_5_1.txt',   'tai20_20_1.txt',
     'tai50_10_1.txt',   'tai50_5_1.txt',    'tai100_20_1.txt',
     'tai20_10_1.txt',   'tai20_5_1.txt',    'tai50_20_1.txt'
 ]
+"""
+filenames = [
+    'tai20_5_1.txt',  'tai20_10_1.txt',   'tai20_20_1.txt',
+    'tai50_10_1.txt',   'tai50_5_1.txt',    'tai100_20_1.txt',
+    'tai100_5_1.txt',   'tai100_10_1.txt',    'tai50_20_1.txt'
+]
 
 f2 = open( './statistics/SA.txt', "w")
 
 for each in filenames:
+    best = 10000
+    worst = 0
+    avg = 0
+    standardDeviation = 0
     ### Parameters for whole algorithm
     total = 0
 
     ### Parameters for SA
-    epochLength = 10    # <--- Modify if needed
+    epochLength = 10     # <--- Modify if needed
     temperature = 1000  # <--- Modify if needed
-    coolingFactor = 10  # <--- Modify if needed
-    MaxSteps = 1000     # <--- Modify if needed
+    coolingFactor = 9.5   # <--- Modify if needed
+    MaxSteps = 1000      # <--- Modify if needed
 
     f2.write( f'Initial temperature: {temperature}, cooling factor: {coolingFactor}, Epoch length: {epochLength}\n' )
 
@@ -77,6 +85,7 @@ for each in filenames:
     machines = Data[0]
     jobs = Data[1]
     data = Data[2]
+    plotCase = random.randrange( 0, cases + 1, 1 )
 
     ## Initial Solution: generating via randomness
 
@@ -89,29 +98,42 @@ for each in filenames:
         temperature = 1000   # <--- Modify if needed
         steps = 0
 
+        plotX = []
+        plotY = []
         for __ in range( MaxSteps ):   # Stopping criteria
 
             ## Neighborhood Function
-            i = random.randrange( 0, jobs, 1 )
-            j = random.randrange( 0, jobs, 1 )
-            swap( TestSol, i, j )
+            BIFlag = 1
+            while BIFlag == 1:
+                i = random.randrange( 0, jobs, 1 )
+                j = random.randrange( 0, jobs, 1 )
+                swap( TestSol, i, j )
 
-            ## Calculate Machine Time
-            time = SpantimeCalculate( TestSol, data, jobs, machines )
+                ## Calculate Machine Time
+                time = SpantimeCalculate( TestSol, data, jobs, machines )
+                #print(f'curr = {curr}, time = {time}, step = {__}, cases = {_}')
 
-            ## Selecting Function
-            if time < curr:
-                curr = time
-                sol = TestSol
-            else:
-                if math.exp( ( time - curr ) / temperature ) < random.uniform( 0.0, 1.0 ):
+                ## Selecting Function
+                if time < curr:
                     curr = time
                     sol = TestSol
+                    BIFlag = 0
+                else:
+                    #print(f'{math.exp( ( curr - time ) / temperature )}')
+                    if math.exp( ( curr - time ) / temperature ) > random.uniform( 0.0, 1.0 ):
+                        curr = time
+                        sol = TestSol
+                        BIFlag = 0
 
             ## Temperature Control
             steps += 1
             if steps % epochLength == 0:
                 temperature = cool( temperature, coolingFactor )
+
+            ## Plot parameters
+            if _ == plotCase:
+                plotX.append( __ + 1 )
+                plotY.append( time )
         
         #print( f'\t\tIn {_} round: {curr}' )
         if curr < best:
@@ -120,6 +142,15 @@ for each in filenames:
             worst = curr
         total += curr
         standardDeviation += ( curr * curr )
+
+        # Plot
+        if _ == plotCase:
+            plt.title( f"SA {each[:-4]}", loc = 'center')
+            plt.xlabel("Steps")
+            plt.ylabel("makespan")
+            plt.plot( plotX, plotY, )
+            plt.savefig(f'./statistics/plot/SA/SA_{each[:-4]}.png')
+            plt.clf()
 
     avg = round( total / cases, 2 )
     standardDeviation = round( math.sqrt( ( standardDeviation / cases ) - ( avg * avg ) ), 2 )
