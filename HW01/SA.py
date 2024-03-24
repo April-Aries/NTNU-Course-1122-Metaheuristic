@@ -30,7 +30,7 @@ def swap( sol: list[int], a: int, b: int ) -> list[ int ]:
 
 # Cooling function
 def cool( temperature: int, coolingFactor: int ) -> int:
-    temperature -= coolingFactor
+    temperature *= coolingFactor
     return temperature
 
 # 
@@ -74,8 +74,8 @@ for each in filenames:
 
     ### Parameters for SA
     epochLength = 10     # <--- Modify if needed
-    temperature = 1000  # <--- Modify if needed
-    coolingFactor = 9.5   # <--- Modify if needed
+    temperature = 3000  # <--- Modify if needed
+    coolingFactor = 0.9   # <--- Modify if needed
     MaxSteps = 1000      # <--- Modify if needed
 
     f2.write( f'Initial temperature: {temperature}, cooling factor: {coolingFactor}, Epoch length: {epochLength}\n' )
@@ -104,7 +104,9 @@ for each in filenames:
 
             ## Neighborhood Function
             BIFlag = 1
-            while BIFlag == 1:
+            tmp = 0
+            while BIFlag == 1 and tmp < 20:
+                tmp += 1
                 i = random.randrange( 0, jobs, 1 )
                 j = random.randrange( 0, jobs, 1 )
                 swap( TestSol, i, j )
@@ -119,7 +121,7 @@ for each in filenames:
                     sol = TestSol
                     BIFlag = 0
                 else:
-                    #print(f'{math.exp( ( curr - time ) / temperature )}')
+                    #print(f'{math.exp( ( curr - time ) / temperature )}, {temperature}')
                     if math.exp( ( curr - time ) / temperature ) > random.uniform( 0.0, 1.0 ):
                         curr = time
                         sol = TestSol
@@ -133,7 +135,7 @@ for each in filenames:
             ## Plot parameters
             if _ == plotCase:
                 plotX.append( __ + 1 )
-                plotY.append( time )
+                plotY.append( curr )
         
         #print( f'\t\tIn {_} round: {curr}' )
         if curr < best:
