@@ -1,18 +1,18 @@
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai20_5_1.txt	1314	1332.16	1351	8.77
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai20_10_1.txt	1717	1755.28	1783	16.21
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai20_20_1.txt	2457	2491.44	2520	15.14
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai50_10_1.txt	3436	3471.92	3501	17.66
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai50_5_1.txt	2752	2843.56	2882	27.75
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai100_20_1.txt	7197	7338.08	7401	43.79
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai100_5_1.txt	5626	5695.2	5751	30.82
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai100_10_1.txt	6368	6452.14	6520	34.12
-Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
-	tai50_20_1.txt	4403	4485.86	4532	29.21
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai20_5_1.txt	1306	1333.66	1354	9.3	0.59
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai20_10_1.txt	1680	1748.88	1790	20.62	1.16
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai20_20_1.txt	2449	2488.36	2527	17.91	2.3
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai50_10_1.txt	3422	3464.02	3514	22.71	2.68
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai50_5_1.txt	2753	2840.2	2882	26.12	1.36
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai100_20_1.txt	7247	7329.8	7385	35.02	10.59
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai100_5_1.txt	5644	5700.2	5747	27.0	2.61
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai100_10_1.txt	6334	6455.62	6521	40.39	5.57
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai50_20_1.txt	4411	4488.72	4552	29.99	5.45

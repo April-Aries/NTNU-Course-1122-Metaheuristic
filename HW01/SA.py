@@ -1,6 +1,7 @@
 import random
 import math
 import matplotlib.pyplot as plt
+import time
 
 # ReadData method
 def ReadData( filepath: str ) -> tuple[ int, int, list[ list[ int ] ] ]:
@@ -74,7 +75,7 @@ for each in filenames:
 
     ### Parameters for SA
     epochLength = 10     # <--- Modify if needed
-    temperature = 3000  # <--- Modify if needed
+    temperature = 1000  # <--- Modify if needed
     coolingFactor = 0.9   # <--- Modify if needed
     MaxSteps = 1000      # <--- Modify if needed
 
@@ -86,10 +87,14 @@ for each in filenames:
     jobs = Data[1]
     data = Data[2]
     plotCase = random.randrange( 0, cases + 1, 1 )
+    timeCount = 0
 
     ## Initial Solution: generating via randomness
 
     for _ in range( cases ):
+        # If you are testing the program, I really recommend to uncomment the following line to print log file?
+        #print( f'\t--- In {each} case {_}/50' )
+        startTime = time.time()
 
         sol = [ i for i in range( jobs ) ]
         random.shuffle( sol )
@@ -112,18 +117,18 @@ for each in filenames:
                 swap( TestSol, i, j )
 
                 ## Calculate Machine Time
-                time = SpantimeCalculate( TestSol, data, jobs, machines )
-                #print(f'curr = {curr}, time = {time}, step = {__}, cases = {_}')
+                Time = SpantimeCalculate( TestSol, data, jobs, machines )
+                #print(f'curr = {curr}, Time = {Time}, step = {__}, cases = {_}')
 
                 ## Selecting Function
-                if time < curr:
-                    curr = time
+                if Time < curr:
+                    curr = Time
                     sol = TestSol
                     BIFlag = 0
                 else:
-                    #print(f'{math.exp( ( curr - time ) / temperature )}, {temperature}')
-                    if math.exp( ( curr - time ) / temperature ) > random.uniform( 0.0, 1.0 ):
-                        curr = time
+                    #print(f'{math.exp( ( curr - Time ) / temperature )}, {temperature}')
+                    if math.exp( ( curr - Time ) / temperature ) > random.uniform( 0.0, 1.0 ):
+                        curr = Time
                         sol = TestSol
                         BIFlag = 0
 
@@ -136,7 +141,7 @@ for each in filenames:
             if _ == plotCase:
                 plotX.append( __ + 1 )
                 plotY.append( curr )
-        
+
         #print( f'\t\tIn {_} round: {curr}' )
         if curr < best:
             best = curr
@@ -151,12 +156,16 @@ for each in filenames:
             plt.xlabel("Steps")
             plt.ylabel("makespan")
             plt.plot( plotX, plotY, )
-            plt.savefig(f'./statistics/plot/SA/SA_{each[:-4]}.png')
+            plt.savefig(f'./statistics/plot/SA/Normal/SA_{each[:-4]}.png')
             plt.clf()
+
+        endTime = time.time()
+        timeCount += ( endTime - startTime )
 
     avg = round( total / cases, 2 )
     standardDeviation = round( math.sqrt( ( standardDeviation / cases ) - ( avg * avg ) ), 2 )
+    avgTime = round( timeCount / cases, 2 )
 
-    print( f'In {each}:\n\tBest: {best}\n\tWorst: {worst}\n\tAverage: {avg}\n\tStandard deviation: {standardDeviation}' )
-    f2.write( f'\t{each}\t{best}\t{avg}\t{worst}\t{standardDeviation}\n' )
+    print( f'In {each}:\n\tBest: {best}\n\tWorst: {worst}\n\tAverage: {avg}\n\tStandard deviation: {standardDeviation}\n\tTime: {avgTime}' )
+    f2.write( f'\t{each}\t{best}\t{avg}\t{worst}\t{standardDeviation}\t{avgTime}\n' )
 f2.close()
