@@ -45,8 +45,8 @@ def SpantimeCalculate( sol: list[int], data: list[list[int]], jobs: int, machine
     return currTime
 
 
-def SA( temperature: int, coolingFactor: float, epochLength: int, dataset: str, plotFolder: str ):
-    tmp2 = epochLength
+def SA( f2, temperature: int, coolingFactor: float, epochLength: int, dataset: str, plotFolder: str, modification ):
+    t = temperature
     # Parameters for statistics
     best = 10000
     worst = 0
@@ -72,10 +72,9 @@ def SA( temperature: int, coolingFactor: float, epochLength: int, dataset: str, 
     for _ in range( cases ):
         ### Initial Solution: generating via randomness
         sol = [ i for i in range( jobs ) ]
-        random.shuffle( sol )
         TestSol = [ i for i in sol ]
         curr = SpantimeCalculate( sol, data, jobs, machines )
-        temperature = 10000   # <--- Modify if needed
+        temperature = t # <--- Modify if needed
         steps = 0
         plotX = []
         plotY = []
@@ -124,11 +123,11 @@ def SA( temperature: int, coolingFactor: float, epochLength: int, dataset: str, 
 
         # Plot
         if _ == plotCase:
-            plt.title( f"SA {dataset[:-4]}", loc = 'center')
+            plt.title( f"SA {dataset[:-4]} T = {t} F = {coolingFactor} EL = {epochLength}", loc = 'center')
             plt.xlabel("Steps")
             plt.ylabel("makespan")
             plt.plot( plotX, plotY, )
-            plt.savefig(f'./statistics/plot/SA/{plotFolder}/SA_{tmp2}.png')
+            plt.savefig(f'./statistics/plot/SA/{plotFolder}/SA_{plotFolder}_{modification}.png')
             plt.clf()
     # Evaluate statistics
     avg = round( total / cases, 2 )
@@ -142,8 +141,25 @@ def SA( temperature: int, coolingFactor: float, epochLength: int, dataset: str, 
 # Here is main function ...
 if __name__ == '__main__':
     f2 = open( f'./statistics/SA_temperature.txt', "w")
-    SA( temperature = 6000, coolingFactor = 0.5, epochLength = 100, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength' )
-    SA( temperature = 6000, coolingFactor = 0.5, epochLength = 50, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength' )
-    SA( temperature = 6000, coolingFactor = 0.5, epochLength = 25, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength' )
-    SA( temperature = 6000, coolingFactor = 0.5, epochLength = 1, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength' )
+    # SA sub experiment: initial temperature
+    SA( f2, temperature = 9000, coolingFactor = 0.9, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'temperature', modification = 9000 )
+    SA( f2, temperature = 6000, coolingFactor = 0.9, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'temperature', modification = 6000 )
+    SA( f2, temperature = 3000, coolingFactor = 0.9, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'temperature', modification = 3000 )
+    SA( f2, temperature = 1000, coolingFactor = 0.9, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'temperature', modification = 1000 )
+    f2.close()
+
+    # SA sub experiment: cooling factor
+    f2 = open( f'./statistics/SA_coolingFactor.txt', "w")
+    SA( f2, temperature = 1000, coolingFactor = 0.95, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'coolingFactor', modification = 0.95 )
+    SA( f2, temperature = 1000, coolingFactor = 0.9, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'coolingFactor', modification = 0.9 )
+    SA( f2, temperature = 1000, coolingFactor = 0.85, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'coolingFactor', modification = 0.85 )
+    SA( f2, temperature = 1000, coolingFactor = 0.8, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'coolingFactor', modification = 0.8 )
+    f2.close()
+
+    # SA sub experiment: epoch length
+    f2 = open( f'./statistics/SA_epochLength.txt', "w")
+    SA( f2, temperature = 1000, coolingFactor = 0.9, epochLength = 20, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength', modification = 20 )
+    SA( f2, temperature = 1000, coolingFactor = 0.9, epochLength = 10, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength', modification = 10 )
+    SA( f2, temperature = 1000, coolingFactor = 0.9, epochLength = 5, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength', modification = 5 )
+    SA( f2, temperature = 1000, coolingFactor = 0.9, epochLength = 1, dataset = 'tai20_5_1.txt', plotFolder = 'epochLength', modification = 1 )
     f2.close()

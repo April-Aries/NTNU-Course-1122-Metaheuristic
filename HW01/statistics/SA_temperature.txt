@@ -1,0 +1,8 @@
+Initial temperature: 9000, cooling factor: 0.9, Epoch length: 10
+	tai20_5_1	1313	1331.25	1347	9.2
+Initial temperature: 6000, cooling factor: 0.9, Epoch length: 10
+	tai20_5_1	1316	1336.75	1356	10.93
+Initial temperature: 3000, cooling factor: 0.9, Epoch length: 10
+	tai20_5_1	1321	1337.35	1353	8.64
+Initial temperature: 1000, cooling factor: 0.9, Epoch length: 10
+	tai20_5_1	1311	1332.75	1347	9.7
