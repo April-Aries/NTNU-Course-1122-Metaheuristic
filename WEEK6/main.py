@@ -48,7 +48,7 @@ def Parentselection():
     return parent1, parent2, parent3, parent4
 
 # LOX
-def LOX( sol, parent1, parent2, child, start, end ):
+def LOX( sol, parent1, parent2, start, end ):
     tmp = [ 0 for i in range(end)]
     tmp[0:start] = sol[parent1][0:start]
     idx = start
@@ -60,10 +60,10 @@ def LOX( sol, parent1, parent2, child, start, end ):
 
 def crossOver( sol, parent1, parent2, parent3, parent4, start, end ):
     idx = populationSize
-    LOX( sol, parent1, parent2, idx, start, end )
-    LOX( sol, parent2, parent1, idx+1, start, end )
-    LOX( sol, parent3, parent4, idx+2, start, end )
-    LOX( sol, parent4, parent3, idx+3, start, end )
+    LOX( sol, parent1, parent2, start, end )
+    LOX( sol, parent2, parent1, start, end )
+    LOX( sol, parent3, parent4, start, end )
+    LOX( sol, parent4, parent3, start, end )
 
 def mutation(sol, populationSize, jobs):
     threshhold = 70
