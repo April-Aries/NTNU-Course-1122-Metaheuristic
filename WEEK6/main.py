@@ -48,14 +48,25 @@ def Parentselection():
     return parent1, parent2, parent3, parent4
 
 # LOX
-def LOX( sol, parent1, parent2, start, end ):
-    tmp = [ 0 for i in range(end)]
-    tmp[0:start] = sol[parent1][0:start]
-    idx = start
-    for i in range( 0,len(sol[parent2]) ):
+def OX( sol, parent1, parent2, start, end ):
+    tmp = [ 0 for i in range(len(parent2))]
+    tmp[start:end] = sol[parent1][start:end]
+    idx = end
+    for i in range( 0, len(parent2) ):
         if not sol[parent2][i] in tmp:
-            tmp[idx] = sol[parent2][i]
-            idx += 1
+            tmp[i] = sol[parent2][idx]
+        idx = ( idx + 1 ) % len(parent2)
+    sol.append( tmp )
+
+# LOX
+def LOX( sol, parent1, parent2, start, end ):
+    tmp = [ 0 for i in range(len(parent2))]
+    tmp[start:end] = sol[parent1][start:end]
+    idx = 0
+    for i in range( 0, len(parent2) ):
+        if not sol[parent2][i] in tmp:
+            tmp[i] = sol[parent2][idx]
+        idx += 1
     sol.append( tmp )
 
 def crossOver( sol, parent1, parent2, parent3, parent4, start, end ):
