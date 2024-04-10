@@ -69,6 +69,28 @@ def LOX( sol, parent1, parent2, start, end ):
         idx += 1
     sol.append( tmp )
 
+# PMX
+def PMX( sol, parent1, parent2, start, end ):
+    tmp = [ parent2[i] for i in range(len(parent2)) ]
+    for i in range( start, end ):
+        c = parent2.index(parent1[i])
+        tmp[i] = parent1[i]
+        tmp[c] = parent2[i]
+    sol.append( tmp )
+
+# CX
+## Problem: Is CX always start from 0?
+def CX( sol, parent1, parent2, start, end ):
+    tmp = [ parent2[i] for i in range(len(parent2)) ]
+    c = parent1[0]
+    while True:
+        idx = parent1.index( c )
+        c = parent2[idx]
+        tmp[idx] = parent1[idx]
+        if c == parent1[0]:
+            break
+    sol.append( tmp )
+
 def crossOver( sol, parent1, parent2, parent3, parent4, start, end ):
     idx = populationSize
     LOX( sol, parent1, parent2, start, end )
