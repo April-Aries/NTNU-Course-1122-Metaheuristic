@@ -171,7 +171,7 @@ count = 0
 cross = ['OX', 'LOX', 'PMX', 'CX']
 for crossOverMethod in cross: 
     for each in filenames:
-        writeFileName = f'M{mu}{each[:-4]}.txt'
+        writeFileName = f'C{crossOverMethod}{each[:-4]}.txt'
         f2 = open( writeFileName, 'w' )
         populationSize = 10  # <-- Modify
         parentNum = 10       # <-- Modify
