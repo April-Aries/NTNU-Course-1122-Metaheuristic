@@ -1,0 +1,25 @@
+Initialization: 3   Andrea
+    * random
+    * Neh
+    * Rajendran
+Mating selection: 2 Andrea
+    * random
+    * ranking
+crossover: 4	    AA
+    * LOX
+    * OX
+    * CX
+    * PMX
+mutation: 1	    AA
+    * rate: 10, 50, 80
+selection: 4	    joshua
+    * greedy
+    * all children
+    * 50% parents 50% children
+
+* Lamarkian
+
+* population size:  10,	400, 1000 / 500, 500, 500
+* # parent:	    8,	300, 750  / 10,  100, 250
+
+* Best
