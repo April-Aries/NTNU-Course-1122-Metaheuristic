@@ -1,0 +1,10 @@
+=== Parameter Test ===
+population size: 400
+parent number: 300
+======================
+Best case: 1618
+Average case: 1741.15
+Worst case: 1811
+Stdev: 66.1563339849
+Steps: 267.7
+Best seq: [3, 4, 2, 5, 8, 14, 19, 16, 17, 12, 1, 11, 7, 18, 10, 13, 9, 6, 0, 15]

@@ -1,0 +1,9 @@
+=== Crossover Test ===
+crossover method = PMX
+======================
+Best case: 1599
+Average case: 1670.15
+Worst case: 1820
+Stdev: 89.582819664
+Steps: 654.95
+Best seq: [4, 8, 11, 2, 3, 1, 14, 9, 16, 13, 6, 18, 5, 12, 7, 19, 10, 17, 0, 15]

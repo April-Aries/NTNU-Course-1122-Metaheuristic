@@ -1,10 +1,12 @@
+import statistics
 from statistics import mean
 import random
 import math
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import time
 
 from initialization import *
+from mating_selection import *
 
 # ReadData method
 def ReadData( filepath):
@@ -44,40 +46,76 @@ def SpantimeCalculate( sol, data, jobs, machines):
 
 def Parentselection(parentNum, populationSize, IIScore):
     parents = []
-    avg = mean(IIScore)
     
-    for i in range(parentNum):
+    for i in range(0, parentNum, 2):
         a = random.randrange( 0, populationSize, 1 )
         b = random.randrange( 0, populationSize, 1 )
-        """while IIScore[a] > avg and IIScore[b] > avg:
-            a = random.randrange( 0, populationSize, 1 )
-            b = random.randrange( 0, populationSize, 1 )"""
+
         parents.append([a, b])
     
     return parents
 
-# LOX
-def LOX( sol, parent1, parent2, start, end ):
-    tmp = [ 0 for i in range(len(sol[parent2]))]
+# OX
+def OX( sol, parent1, parent2, start, end ):
+    tmp = [ -1 for i in range(len(sol[parent2]))]
     tmp[start:end] = sol[parent1][start:end]
-    tmp[:start] = [-1]*(end-start)
-
-    idx = 0
-    for i in range( 0, len(sol[parent2]) ):
+    idx = end
+    for i in range( end, len(sol[parent2]) ):
         if sol[parent2][i] not in tmp:
             tmp[idx] = sol[parent2][i]
             idx += 1
-
+            if idx == len(sol[parent2]):
+                idx = 0
+    for i in range( 0, end ):
+        if sol[parent2][i] not in tmp:
+            tmp[idx] = sol[parent2][i]
+            idx += 1
+            if idx == len(sol[parent2]):
+                idx = 0
     sol.append( tmp )
 
+# LOX
+def LOX( sol, parent1, parent2, start, end ):
+    tmp = [ -1 for i in range(len(sol[parent2]))]
+    tmp[start:end] = sol[parent1][start:end]
+    idx = 0
+    for i in range( 0, len(sol[parent2]) ):
+        if idx == start:
+            idx = end
+        if sol[parent2][i] not in tmp:
+            tmp[idx] = sol[parent2][i]
+            idx += 1
+    sol.append( tmp )
+
+# PMX
+def PMX( sol, parent1, parent2, start, end ):
+    tmp = [ sol[parent2][i] for i in range(len(sol[parent2])) ]
+    for i in range( start, end ):
+        c = sol[parent2].index(sol[parent1][i])
+        tmp[i] = sol[parent1][i]
+        tmp[c] = sol[parent2][i]
+    sol.append( tmp )
+
+# CX
+## Problem: Is CX always start from 0?
+def CX( sol, parent1, parent2, start, end ):
+    tmp = [ sol[parent2][i] for i in range(len(sol[parent2])) ]
+    c = sol[parent1][0]
+    while True:
+        idx = sol[parent1].index( c )
+        c = sol[parent2][idx]
+        tmp[idx] = sol[parent1][idx]
+        if c == sol[parent1][0]:
+            break
+    sol.append(tmp)
 
 def crossOver( sol, parents, parentNum, start, end):
-    for i in range(parentNum):
-        LOX( sol, parents[i][0], parents[i][1], start, end )
-        LOX( sol, parents[i][1], parents[i][0], start, end )
+    for i in range(parentNum//2):
+        CX( sol, parents[i][0], parents[i][1], start, end )
+        CX( sol, parents[i][1], parents[i][0], start, end )
 
 def mutation(sol, populationSize, jobs):
-    threshhold = 50
+    threshhold = 10
     for i in range(populationSize, populationSize+4):
         mutationRate = random.randrange(0,101,1)
         if mutationRate > threshhold:
@@ -100,14 +138,15 @@ def II( sol, data, jobs, machines):
                 List[0] = sol[i]
                 List[1] = sol[j]
                 temp_time = m_time
+                break
 
         if best_time < temp_time and best_time != 0:#if record didn't get better
             return best_time
         else:
             sol = swap(sol, List[0], List[1])#into the next round
 
-def selection(sol, IIScore, parentNum):
-    for i in range(parentNum):
+def selection(sol, IIScore, populationSize):
+    while len(IIScore) > populationSize:
         idx = IIScore.index( max(IIScore) )
         IIScore.pop(idx)
         sol.pop(idx)
@@ -116,58 +155,76 @@ def selection(sol, IIScore, parentNum):
 
 ## Parameters needed
 ### Parameters for whole algorithm
-cases = 10      # <--- Modify if needed
+cases = 20      # <--- Modify if needed
 filenames = [
-    'tai20_5_1.txt',  'tai20_10_1.txt',   'tai20_20_1.txt',
-    'tai50_5_1.txt',   'tai50_10_1.txt',    'tai50_20_1.txt',
-    'tai100_5_1.txt',   'tai100_10_1.txt',    'tai100_20_1.txt'
+    'tai20_5_1.txt', 'tai50_5_1.txt', 'tai100_5_1.txt',
+    'tai20_10_1.txt', 'tai50_10_1.txt', 'tai100_10_1.txt',
+    'tai20_20_1.txt', 'tai50_20_1.txt', 'tai100_20_1.txt'
 ]
 
 count = 0
 for each in filenames:
-    writeFileName = 'TA0' + str( count ) + '1.txt'
+    writeFileName = 'Total' + each[:-4] + '.txt'
     f2 = open( writeFileName, 'w' )
-    populationSize = 400
-    MaxSteps = 500
-    parentNum = 300
+    populationSize = 500  # <-- Modify
+    parentNum = 100        # <-- Modify
+    MaxSteps = 1000
     bestSol = [' ', 10000000]
     ## Read Data
     Data = ReadData( './PFSP_benchmark_data_set/' + each )
     machines = Data[0]
     jobs = Data[1]
     data = Data[2]
+
+    record = []
     
     start = time.time()
 
     sol = [ [] for i in range(populationSize) ]  # Population size
     IIScore = [ 0 for i in range(populationSize) ]
-    
+    stepCount = [ 0 for i in range(cases)]
+
     for iter in range( cases ):
         # Initial Solution
-        sol = initialization2(data, jobs, machines, populationSize)
+        sol = NEH(data, jobs, machines, populationSize)
 
         for i in range(populationSize):
             IIScore[i] = SpantimeCalculate( sol[i], data, jobs, machines) #II( sol[i], data, jobs, machines ) 
     
         for steps in range(MaxSteps):
-            parents = Parentselection(parentNum, populationSize, IIScore)
+            parents = ranking(parentNum, populationSize, IIScore)
 
             crossOver( sol, parents, parentNum, jobs//2, jobs )
             mutation(sol, populationSize, jobs)
 
             for i in range(populationSize,populationSize + parentNum):
-
                 IIScore.append( II( sol[i], data, jobs, machines ) )
-            selection(sol, IIScore, parentNum)
+
+            idx = IIScore.index( min(IIScore) )
+            if (bestSol[1] > IIScore[idx]):
+                bestSol[0] = sol[idx]
+                bestSol[1] = IIScore[idx]
+
+            selection(sol, IIScore, populationSize )
             
+            stepCount[iter] += 1
             end = time.time()
             if (end - start) > 180:
                 break
 
+        # Move into for steps <---
         idx = IIScore.index( min(IIScore) )
-        if (bestSol[1] > IIScore[idx]):
-            bestSol[0] = sol[idx]
-            bestSol[1] = IIScore[idx]
+        record.append(IIScore[idx])
 
-    print(f'{each}\t{bestSol[1]}\t{bestSol[0]}')
+    # Write file
+    f2.write('=== Total Test ===\n')
+    f2.write('Best case: '+str(bestSol[1])+'\n')
+    f2.write('Average case: '+str(mean(record))+'\n')
+    f2.write('Worst case: '+str(max(record))+'\n')
+    f2.write('Stdev: '+str(statistics.stdev(record))+'\n')
+    f2.write('Steps: '+str(mean(stepCount))+'\n')
+    f2.write('Best seq: '+str(bestSol[0])+'\n')
+
+    print(bestSol[1])
     count += 1
+    f2.close()

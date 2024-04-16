@@ -1,0 +1,9 @@
+=== Init methods Test ===
+Init method: randomInit
+======================
+Best case: 1583
+Average case: 1595.1
+Worst case: 1617
+Stdev: 11.3596701212
+Steps: 694.05
+Best seq: [17, 4, 8, 11, 16, 2, 6, 3, 1, 14, 7, 12, 9, 5, 18, 10, 13, 19, 0, 15]

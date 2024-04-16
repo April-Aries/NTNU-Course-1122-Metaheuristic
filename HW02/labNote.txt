@@ -23,3 +23,11 @@ selection: 4	    joshua
 * # parent:	    8,	300, 750  / 10,  100, 250
 
 * Best
+Init: Neh
+Mating: Ranking
+crossOver: CX
+mutation: 10%
+selection: greedy
+Lamarkian
+population size: 500
+# parent: 100

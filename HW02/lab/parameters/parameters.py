@@ -45,14 +45,11 @@ def SpantimeCalculate( sol, data, jobs, machines):
 
 def Parentselection(parentNum, populationSize, IIScore):
     parents = []
-    avg = mean(IIScore)
     
-    for i in range(parentNum):
+    for i in range(0, parentNum, 2):
         a = random.randrange( 0, populationSize, 1 )
         b = random.randrange( 0, populationSize, 1 )
-        """while IIScore[a] > avg and IIScore[b] > avg:
-            a = random.randrange( 0, populationSize, 1 )
-            b = random.randrange( 0, populationSize, 1 )"""
+
         parents.append([a, b])
     
     return parents
@@ -109,7 +106,7 @@ def CX( sol, parent1, parent2, start, end ):
         tmp[idx] = sol[parent1][idx]
 
 def crossOver( sol, parents, parentNum, start, end):
-    for i in range(parentNum):
+    for i in range(parentNum//2):
         LOX( sol, parents[i][0], parents[i][1], start, end )
         LOX( sol, parents[i][1], parents[i][0], start, end )
 
@@ -137,6 +134,7 @@ def II( sol, data, jobs, machines):
                 List[0] = sol[i]
                 List[1] = sol[j]
                 temp_time = m_time
+                break
 
         if best_time < temp_time and best_time != 0:#if record didn't get better
             return best_time
@@ -160,11 +158,11 @@ filenames = [
 
 count = 0
 for each in filenames:
-    writeFileName = f'{each[:-4]}.txt'
+    writeFileName = each[:-4] + '.txt'
     f2 = open( writeFileName, 'w' )
-    populationSize = 10  # <-- Modify
-    parentNum = 10        # <-- Modify
-    MaxSteps = 500
+    populationSize = 1000  # <-- Modify
+    parentNum = 750        # <-- Modify
+    MaxSteps = 1000
     bestSol = [' ', 10000000]
     ## Read Data
     Data = ReadData( './PFSP_benchmark_data_set/' + each )
@@ -216,16 +214,16 @@ for each in filenames:
         record.append(IIScore[idx])
 
     # Write file
-    f2.write(f'=== Parameter Test ===\n')
-    f2.write(f'Population size = {populationSize}\n')
-    f2.write(f'Parent number = {parentNum}\n')
-    f2.write(f'======================\n')
-    f2.write(f'Best case: {bestSol[1]}\n')
-    f2.write(f'Average case: {mean(record)}\n')
-    f2.write(f'Worst case: {max(record)}\n')
-    f2.write(f'Stdev: {statistics.stdev(record)}\n')
-    f2.write(f'Steps: {mean(stepCount)}\n')
-    f2.write(f'Best seq: {bestSol[0]}\n')
+    f2.write('=== Parameter Test ===\n')
+    f2.write('population size: '+str(populationSize)+'\n')
+    f2.write('parent number: '+str(parentNum)+'\n')
+    f2.write('======================\n')
+    f2.write('Best case: '+str(bestSol[1])+'\n')
+    f2.write('Average case: '+str(mean(record))+'\n')
+    f2.write('Worst case: '+str(max(record))+'\n')
+    f2.write('Stdev: '+str(statistics.stdev(record))+'\n')
+    f2.write('Steps: '+str(mean(stepCount))+'\n')
+    f2.write('Best seq: '+str(bestSol[0])+'\n')
 
     print(bestSol[1])
     count += 1

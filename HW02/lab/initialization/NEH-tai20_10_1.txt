@@ -1,0 +1,9 @@
+=== Init methods Test ===
+Init method: NEH
+======================
+Best case: 1602
+Average case: 1602.0
+Worst case: 1602
+Stdev: 0.0
+Steps: 649.5
+Best seq: [17, 3, 4, 8, 11, 16, 1, 2, 7, 18, 9, 13, 14, 6, 5, 10, 12, 0, 19, 15]

@@ -45,14 +45,11 @@ def SpantimeCalculate( sol, data, jobs, machines):
 
 def Parentselection(parentNum, populationSize, IIScore):
     parents = []
-    avg = mean(IIScore)
-    
-    for i in range(parentNum):
+
+    for i in range(0, parentNum, 2):
         a = random.randrange( 0, populationSize, 1 )
         b = random.randrange( 0, populationSize, 1 )
-        """while IIScore[a] > avg and IIScore[b] > avg:
-            a = random.randrange( 0, populationSize, 1 )
-            b = random.randrange( 0, populationSize, 1 )"""
+        
         parents.append([a, b])
     
     return parents
@@ -61,7 +58,7 @@ def Parentselection(parentNum, populationSize, IIScore):
 def OX( sol, parent1, parent2, start, end ):
     tmp = [ -1 for i in range(len(sol[parent2]))]
     tmp[start:end] = sol[parent1][start:end]
-    idx = end
+    idx = end-1
     for i in range( end, len(sol[parent2]) ):
         if sol[parent2][i] not in tmp:
             tmp[idx] = sol[parent2][i]
@@ -93,9 +90,10 @@ def LOX( sol, parent1, parent2, start, end ):
 def PMX( sol, parent1, parent2, start, end ):
     tmp = [ sol[parent2][i] for i in range(len(sol[parent2])) ]
     for i in range( start, end ):
-        c = sol[parent2].index(sol[parent1][i])
+        c = tmp.index(sol[parent1][i])
+        d = tmp[i]
         tmp[i] = sol[parent1][i]
-        tmp[c] = sol[parent2][i]
+        tmp[c] = d
     sol.append( tmp )
 
 # CX
@@ -107,9 +105,12 @@ def CX( sol, parent1, parent2, start, end ):
         idx = sol[parent1].index( c )
         c = sol[parent2][idx]
         tmp[idx] = sol[parent1][idx]
+        if c == sol[parent1][0]:
+            break
+    sol.append(tmp)
 
 def crossOver( sol, parents, parentNum, start, end, crossOverMethod ):
-    for i in range(parentNum):
+    for i in range(parentNum//2):
         if crossOverMethod == 'LOX':
             LOX( sol, parents[i][0], parents[i][1], start, end )
             LOX( sol, parents[i][1], parents[i][0], start, end )
@@ -126,7 +127,7 @@ def crossOver( sol, parents, parentNum, start, end, crossOverMethod ):
 def mutation(sol, populationSize, parentNum, jobs, threshold ):
     for i in range(populationSize, populationSize + parentNum):
         mutationRate = random.randrange(0,101,1)
-        if mutationRate > threshhold:
+        if mutationRate > threshold:
             a = random.randrange(0,jobs,1)
             b = random.randrange(0,jobs,1)
             sol[i] = swap( sol[i], a, b )
@@ -146,6 +147,7 @@ def II( sol, data, jobs, machines):
                 List[0] = sol[i]
                 List[1] = sol[j]
                 temp_time = m_time
+                break
 
         if best_time < temp_time and best_time != 0:#if record didn't get better
             return best_time
@@ -171,11 +173,11 @@ count = 0
 cross = ['OX', 'LOX', 'PMX', 'CX']
 for crossOverMethod in cross: 
     for each in filenames:
-        writeFileName = f'C{crossOverMethod}{each[:-4]}.txt'
+        writeFileName = 'C' + crossOverMethod + each[:-4] +'.txt'
         f2 = open( writeFileName, 'w' )
-        populationSize = 10  # <-- Modify
-        parentNum = 10       # <-- Modify
-        MaxSteps = 500
+        populationSize = 500  # <-- Modify
+        parentNum = 100       # <-- Modify
+        MaxSteps = 1000
         bestSol = [' ', 10000000]
         ## Read Data
         Data = ReadData( './PFSP_benchmark_data_set/' + each )
@@ -227,15 +229,15 @@ for crossOverMethod in cross:
             record.append(IIScore[idx])
 
         # Write file
-        f2.write(f'=== Mutation Test ===\n')
-        f2.write(f'crossover method = {crossOverMethod}\n')
-        f2.write(f'======================\n')
-        f2.write(f'Best case: {bestSol[1]}\n')
-        f2.write(f'Average case: {mean(record)}\n')
-        f2.write(f'Worst case: {max(record)}\n')
-        f2.write(f'Stdev: {statistics.stdev(record)}\n')
-        f2.write(f'Steps: {mean(stepCount)}\n')
-        f2.write(f'Best seq: {bestSol[0]}\n')
+        f2.write('=== Crossover Test ===\n')
+        f2.write('crossover method = '+str(crossOverMethod)+'\n')
+        f2.write('======================\n')
+        f2.write('Best case: '+str(bestSol[1])+'\n')
+        f2.write('Average case: '+str(mean(record))+'\n')
+        f2.write('Worst case: '+str(max(record))+'\n')
+        f2.write('Stdev: '+str(statistics.stdev(record))+'\n')
+        f2.write('Steps: '+str(mean(stepCount))+'\n')
+        f2.write('Best seq: '+str(bestSol[0])+'\n')
 
         print(bestSol[1])
         count += 1

@@ -1,0 +1,9 @@
+=== Mating methods Test ===
+MatingMethod: tournament
+======================
+Best case: 1605
+Average case: 1605.65
+Worst case: 1618
+Stdev: 2.90688837075
+Steps: 678.3
+Best seq: [4, 8, 11, 16, 14, 3, 18, 1, 2, 7, 12, 9, 10, 6, 17, 5, 13, 19, 0, 15]

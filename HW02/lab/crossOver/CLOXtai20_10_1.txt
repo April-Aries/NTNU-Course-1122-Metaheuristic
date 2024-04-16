@@ -1,0 +1,9 @@
+=== Crossover Test ===
+crossover method = LOX
+======================
+Best case: 1591
+Average case: 1666.5
+Worst case: 1812
+Stdev: 85.3324766953
+Steps: 690.85
+Best seq: [4, 17, 8, 11, 19, 3, 1, 10, 12, 14, 16, 18, 6, 13, 2, 5, 7, 9, 0, 15]

@@ -2,10 +2,10 @@ import statistics
 from statistics import mean
 import random
 import math
-#import matplotlib.pyplot as plt
 import time
 
 from initialization import *
+from mating_selection import *
 
 # ReadData method
 def ReadData( filepath):
@@ -43,36 +43,6 @@ def SpantimeCalculate( sol, data, jobs, machines):
             currTime = currEnd[ sol[j] ]
     return currTime
 
-def Parentselection(parentNum, populationSize, IIScore):
-    parents = []
-    
-    for i in range(0, parentNum, 2):
-        a = random.randrange( 0, populationSize, 1 )
-        b = random.randrange( 0, populationSize, 1 )
-
-        parents.append([a, b])
-    
-    return parents
-
-# OX
-def OX( sol, parent1, parent2, start, end ):
-    tmp = [ -1 for i in range(len(sol[parent2]))]
-    tmp[start:end] = sol[parent1][start:end]
-    idx = end
-    for i in range( end, len(sol[parent2]) ):
-        if sol[parent2][i] not in tmp:
-            tmp[idx] = sol[parent2][i]
-            idx += 1
-            if idx == len(sol[parent2]):
-                idx = 0
-    for i in range( 0, end ):
-        if sol[parent2][i] not in tmp:
-            tmp[idx] = sol[parent2][i]
-            idx += 1
-            if idx == len(sol[parent2]):
-                idx = 0
-    sol.append( tmp )
-
 # LOX
 def LOX( sol, parent1, parent2, start, end ):
     tmp = [ -1 for i in range(len(sol[parent2]))]
@@ -86,24 +56,6 @@ def LOX( sol, parent1, parent2, start, end ):
             idx += 1
     sol.append( tmp )
 
-# PMX
-def PMX( sol, parent1, parent2, start, end ):
-    tmp = [ sol[parent2][i] for i in range(len(sol[parent2])) ]
-    for i in range( start, end ):
-        c = sol[parent2].index(sol[parent1][i])
-        tmp[i] = sol[parent1][i]
-        tmp[c] = sol[parent2][i]
-    sol.append( tmp )
-
-# CX
-## Problem: Is CX always start from 0?
-def CX( sol, parent1, parent2, start, end ):
-    tmp = [ sol[parent2][i] for i in range(len(sol[parent2])) ]
-    c = sol[parent1][0]
-    while True:
-        idx = sol[parent1].index( c )
-        c = sol[parent2][idx]
-        tmp[idx] = sol[parent1][idx]
 
 def crossOver( sol, parents, parentNum, start, end):
     for i in range(parentNum//2):
@@ -146,20 +98,29 @@ def selection(sol, IIScore, populationSize):
         IIScore.pop(idx)
         sol.pop(idx)
 
+def initialization(data, jobs, machines, populationSize, initializeMethod):
+    if initializeMethod == "Rajendran":
+        return Rajendran(data, jobs, machines, populationSize)
+    elif initializeMethod == "NEH":
+        return NEH(data, jobs, machines, populationSize)
+    elif initializeMethod == "randomInit":
+        return randomInit(data, jobs, machines, populationSize)
+    
+
 # Here is main function ...
 
 ## Parameters needed
 ### Parameters for whole algorithm
-cases = 20      # <--- Modify if needed
+cases = 20    # <--- Modify if needed
 filenames = [
     'tai20_10_1.txt', 'tai50_10_1.txt', 'tai100_10_1.txt'
 ]
 
 count = 0
-mu = [5,10,20,30,50]
-for mutationRate in mu: 
+initializeMethods = ["Rajendran", "NEH", "randomInit"]
+for initializeMethod in initializeMethods:
     for each in filenames:
-        writeFileName = 'M' + str(mutationRate) + each[:-4] + '.txt'
+        writeFileName =  initializeMethod+"-"+each[:-4]+'.txt'
         f2 = open( writeFileName, 'w' )
         populationSize = 500  # <-- Modify
         parentNum = 100       # <-- Modify
@@ -172,50 +133,48 @@ for mutationRate in mu:
         data = Data[2]
 
         record = []
-        
-        start = time.time()
-
-        sol = [ [] for i in range(populationSize) ]  # Population size
+    
         IIScore = [ 0 for i in range(populationSize) ]
         stepCount = [ 0 for i in range(cases)]
-
+        
+        start = time.time()
+        
         for iter in range( cases ):
             # Initial Solution
-            #sol = initialization2(data, jobs, machines, populationSize)
-            for i in range(populationSize):
-                sol[i] = [j for j in range(jobs)]
-                random.shuffle(sol[i])
+            sol = initialization(data, jobs, machines, populationSize, initializeMethod)
+
 
             for i in range(populationSize):
                 IIScore[i] = SpantimeCalculate( sol[i], data, jobs, machines) #II( sol[i], data, jobs, machines ) 
-        
+
             for steps in range(MaxSteps):
-                parents = Parentselection(parentNum, populationSize, IIScore)
+                #parents = Parentselection(parentNum, populationSize, IIScore)
+                parents = randomMating(parentNum, populationSize, IIScore)
 
                 crossOver( sol, parents, parentNum, jobs//2, jobs )
-                mutation(sol, populationSize, parentNum, jobs, mutationRate)
 
-                for i in range(populationSize,populationSize + parentNum):
+                mutation(sol, populationSize, parentNum, jobs, 10)
+
+                for i in range(populationSize, populationSize + parentNum):
+
                     IIScore.append( II( sol[i], data, jobs, machines ) )
+
+                selection(sol, IIScore, populationSize)
 
                 idx = IIScore.index( min(IIScore) )
                 if (bestSol[1] > IIScore[idx]):
                     bestSol[0] = sol[idx]
                     bestSol[1] = IIScore[idx]
-
-                selection(sol, IIScore, populationSize )
                 
                 stepCount[iter] += 1
                 end = time.time()
                 if (end - start) > 180:
                     break
-            # Move into for steps <---
-            idx = IIScore.index( min(IIScore) )
-            record.append(IIScore[idx])
-
-        # Write file
-        f2.write('=== Mutation Test ===\n')
-        f2.write('Mutation rate = '+str(mutationRate)+'\n')
+                    
+            record.append(bestSol[1])
+           
+        f2.write('=== Init methods Test ===\n')
+        f2.write('Init method: '+initializeMethod+'\n')
         f2.write('======================\n')
         f2.write('Best case: '+str(bestSol[1])+'\n')
         f2.write('Average case: '+str(mean(record))+'\n')
@@ -224,6 +183,6 @@ for mutationRate in mu:
         f2.write('Steps: '+str(mean(stepCount))+'\n')
         f2.write('Best seq: '+str(bestSol[0])+'\n')
 
+
         print(bestSol[1])
         count += 1
-        f2.close()

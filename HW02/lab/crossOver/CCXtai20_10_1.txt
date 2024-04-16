@@ -1,0 +1,9 @@
+=== Crossover Test ===
+crossover method = CX
+======================
+Best case: 1586
+Average case: 1661.2
+Worst case: 1827
+Stdev: 94.5558036294
+Steps: 656.3
+Best seq: [17, 4, 8, 11, 2, 3, 16, 14, 6, 1, 7, 12, 9, 5, 18, 10, 13, 19, 0, 15]

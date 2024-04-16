@@ -1,0 +1,9 @@
+=== Init methods Test ===
+Init method: Rajendran
+======================
+Best case: 1601
+Average case: 1606.4
+Worst case: 1620
+Stdev: 6.98419267836
+Steps: 670.0
+Best seq: [4, 8, 2, 3, 14, 16, 18, 13, 11, 6, 1, 9, 10, 17, 5, 12, 7, 19, 0, 15]

@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-def initialization(data, jobs, machine, populationSize):
+def Rajendran(data, jobs, machine, populationSize):
     
     result = []
     sols = [i for i in range(jobs)]
@@ -45,7 +45,7 @@ def initialization(data, jobs, machine, populationSize):
        
     return result
     
-def initialization2(data, jobs, machine, populationSize):
+def NEH(data, jobs, machine, populationSize):
     
     result = []
     sols = [i for i in range(jobs)]
@@ -95,3 +95,9 @@ def initialization2(data, jobs, machine, populationSize):
        
     return result
     
+def randomInit(data, jobs, machine, populationSize):
+    sol = [ [] for i in range(populationSize) ]
+    for i in range(populationSize):
+        sol[i] = [j for j in range(jobs)]
+        random.shuffle(sol[i])
+    return sol

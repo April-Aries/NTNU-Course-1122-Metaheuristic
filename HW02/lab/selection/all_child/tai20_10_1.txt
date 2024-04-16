@@ -1,0 +1,9 @@
+=== Selecting Test ===
+selecting method: all child
+======================
+Best case: 1687
+Average case: 1782.65
+Worst case: 1825
+Stdev: 23.3244281252
+Steps: 600.35
+Best seq: [3, 9, 4, 8, 7, 12, 18, 16, 1, 19, 10, 11, 13, 2, 14, 6, 5, 17, 15, 0]

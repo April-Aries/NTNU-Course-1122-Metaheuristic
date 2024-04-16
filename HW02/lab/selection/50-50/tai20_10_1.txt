@@ -1,0 +1,9 @@
+=== Selecting Test ===
+selecting method: 50parents-50child
+======================
+Best case: 1609
+Average case: 1658.7
+Worst case: 1805
+Stdev: 67.5683669369
+Steps: 768.25
+Best seq: [4, 11, 8, 9, 17, 16, 2, 13, 6, 1, 19, 5, 18, 7, 12, 14, 10, 3, 0, 15]

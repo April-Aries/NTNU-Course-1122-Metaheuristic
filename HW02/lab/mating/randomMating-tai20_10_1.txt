@@ -1,0 +1,9 @@
+=== Mating methods Test ===
+MatingMethod: randomMating
+======================
+Best case: 1584
+Average case: 1584.0
+Worst case: 1584
+Stdev: 0.0
+Steps: 718.4
+Best seq: [4, 11, 8, 9, 3, 1, 2, 7, 18, 16, 14, 10, 12, 17, 5, 13, 19, 6, 0, 15]

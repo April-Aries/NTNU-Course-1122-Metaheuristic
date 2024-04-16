@@ -1,0 +1,9 @@
+=== Mutation Test ===
+Mutation rate = 80
+======================
+Best case: 1586
+Average case: 1652.95
+Worst case: 1781
+Stdev: 68.6934264839
+Steps: 741.75
+Best seq: [4, 11, 8, 9, 14, 17, 5, 18, 16, 2, 3, 1, 7, 19, 10, 13, 12, 6, 0, 15]
