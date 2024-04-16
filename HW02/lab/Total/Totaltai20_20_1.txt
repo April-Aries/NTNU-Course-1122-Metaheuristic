@@ -1,0 +1,7 @@
+=== Total Test ===
+Best case: 2384
+Average case: 2535.1
+Worst case: 2648
+Stdev: 120.77246985
+Steps: 409.8
+Best seq: [17, 2, 9, 16, 15, 3, 4, 6, 13, 10, 12, 14, 19, 8, 0, 1, 5, 18, 11, 7]
